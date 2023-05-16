@@ -3,7 +3,7 @@
     <ul class="list-unstyled topnav-menu float-end mb-0" id="tooltip-container">
 
         <li>
-            <a class="nav-link waves-effect waves-light" href="#" data-bs-container="#tooltip-container" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lector de códigos QR">
+            <a class="nav-link waves-effect waves-light" href="{{ route('qr_reader') }}" data-bs-container="#tooltip-container" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lector de códigos QR">
                 <i class="mdi mdi-qrcode noti-icon"></i>
             </a>
         </li>

@@ -43,7 +43,20 @@ Route::prefix(env('user'))->namespace('User')->group(static function() {
         Route::get('/qr_generator/list_qr', [App\Http\Controllers\Admin\QRController::class, 'list_qr'])->name('list_qr');
         Route::get('/qr_generator/delete/{id}',[App\Http\Controllers\Admin\QRController::class, 'destroy']);
         Route::get('/qr_generator/status/{id}',[App\Http\Controllers\Admin\QRController::class, 'status']);
-
+        
+        
+        /*
+        |-----------------------------------------
+        |Reader QR Code
+        |-----------------------------------------
+        */ 
+        Route::resource('qr_reader','\App\Http\Controllers\Admin\ReadQRController');
+        Route::get('/qr_reader',  [App\Http\Controllers\Admin\ReadQRController::class, 'index'])->name('qr_reader');
+        Route::post('/reader',  [App\Http\Controllers\Admin\ReadQRController::class, 'reader'])->name('reader');
+        Route::get('/qr_reader/delete/{id}',[App\Http\Controllers\Admin\ReadQRController::class, 'destroy']);
+        Route::get('/qr_reader/status/{id}',[App\Http\Controllers\Admin\ReadQRController::class, 'status']);
+        
+        
 
         /*
         |------------------------------

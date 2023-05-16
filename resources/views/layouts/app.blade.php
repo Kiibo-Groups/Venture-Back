@@ -23,6 +23,9 @@
     @yield('styles')
 </head>
 <body class="loading" 
+    @if(Route::is('qr_reader')) 
+    data-layout-mode="horizontal"
+    @endif
     @if(Route::is('login')) 
     style="background: rgb(42, 42, 42); visibility: visible; opacity: 1;background-color: #242424;background-image: url(https://venturecafemonterrey.org/wp-content/themes/venturecafe/assets/dist/images/f8a86663b7bb891448aaadb7d60fb1ce.svg);background-repeat: no-repeat;background-position: 50% 0%;" 
     @else 
@@ -32,7 +35,7 @@
     
     <!-- Begin page -->
     <div id="wrapper">
-        @if(Auth::guard('web')->check())
+        @if(Auth::guard('web')->check() && !Route::is('qr_reader') )
             <!-- Topbar Start -->
             @include('layouts.top-bar')
             <!-- Left Sidebar -->

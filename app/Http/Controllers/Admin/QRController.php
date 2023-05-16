@@ -22,8 +22,7 @@ class QRController extends Controller
     public function index()
     {
         $data = QRGen::withCount('list')->Orderby('id','DESC')->get();  
-
-
+ 
         return view($this->folder.'qr.index', [ 
             'data' => $data,
             'link' 	=> '/qr_generator/'
