@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
-use App\Http\Controllers\OpenpayController;
+use App\Http\Controllers\Api\ApiController;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Validator;
 use Mail;
+use DB;
 
 class AppUser extends Authenticatable
 {
@@ -29,6 +30,16 @@ class AppUser extends Authenticatable
         'saldo',
         'monedero'
     ];
+
+    public function userTo()
+    {
+        return $this->hasMany('App\Models\ValueConn')->orderBy('created_at');
+    }
+
+    public function userFrom()
+    {
+        return $this->hasMany('App\Models\ValueConn')->orderBy('created_at');
+    }
 
     public function addNew($data)
     {
@@ -160,13 +171,12 @@ class AppUser extends Authenticatable
         if ($count == 0) {
             $add                = AppUser::find($id);
             $add->name          = $data['name'];
+            $add->last_name     = $data['last_name'];
             $add->email         = $data['email'];
             $add->phone         = $data['phone'];
 
-            $add->last_name     = $data['last_name'];
             $add->birthday      = $data['birthday'];
-            $add->sex_type      = $data['sex_type'];
-            $add->user_name     = $data['user_name'];
+            $add->sex_type      = $data['sex_type']; 
 
             if (isset($data['password'])) {
                 $add->password    = $data['password'];
@@ -254,4 +264,144 @@ class AppUser extends Authenticatable
         return AppUser::get();
     }
 
+    /*
+    |--------------------------------------
+    |Get all possible value connections
+    |--------------------------------------
+    */
+    public function getConnections($user_id)
+    {
+        $exceptVC = ValueConn::where('app_user_id', $user_id)->get();
+        $data   = [];
+        $exceptData = ['password','pswfacebook','created_at','updated_at','otp','refered'];
+        $excVC = [];
+
+        foreach ($exceptVC as $exc => $val) {
+            $excVC[] = $val->user_to;
+        }
+
+        // Buscamos conexiones de valor omitiendo las que ya tenemos y nuestros propio ID
+        $users  = AppUser::whereNotIn('id',[$user_id])->whereNotIn('id',$excVC)->orderBy('id','DESC')->get();
+        
+        foreach ($users as $key => $value) {
+
+            $img_exp = $value->pic_profile;
+            $dat     = collect($value)->except($exceptData)->except('pic_profile');
+            $pic_profile = asset('upload/users/'.$img_exp);
+            $newData = $dat->put( 'pic_profile' , $pic_profile );
+
+            $data[] = $newData;
+        }
+
+        return  $data;
+    }
+
+    /*
+    |--------------------------------------
+    |Get all Value Connections 
+    |--------------------------------------
+    */
+    public function getConnectionsByUserId($user_id)
+    {
+        $req = ValueConn::where('app_user_id', $user_id)->get();
+        $data = [];
+        $root = new ApiController;
+
+        foreach ($req as $key => $value) {
+            // Obtenemos Informacion de usuarios 
+            $endUser  = $root->getUser($value->user_to);
+
+            /****** Ratings ********/
+                $totalRate    = ValueConn::where('user_to',$value->user_to)->count();
+                $totalRateSum = ValueConn::where('user_to',$value->user_to)->sum('rate');
+                
+                if($totalRate > 0)
+                {
+                    $avg          = $totalRateSum / $totalRate;
+                }
+                else
+                {
+                    $avg           = 0 ;
+                }
+            /****** Ratings ********/
+
+            // Creamos array
+            $data[] = [ 
+                'user' => $endUser->original['data'],
+                'rating' => $avg,
+                'table_id'	=> $value->id,
+                'created_at' => $value->created_at->diffForHumans(),
+            ];
+        }
+
+
+        return $data;
+    }
+
+    /*
+    |--------------------------------------
+    |Search all Value Connections 
+    |--------------------------------------
+    */
+    public function searchByUserName($val)
+    {
+        $user_id = isset($_GET['user_id']) ? $_GET['user_id'] : 0;
+        
+        $exceptVC = ValueConn::where('app_user_id', $user_id)->get();
+        $excVC = [];
+    
+        foreach ($exceptVC as $exc) {
+            $excVC[] = $exc->user_to;
+        }
+      
+        $req = AppUser::where(function($query) use($val, $user_id, $excVC) {
+            // Que el status del producto este acitov
+            $query->where('status',0);
+            // Que sea diferente al usuario
+            $query->whereNotIn('id',[$user_id]);
+            // Omitimos los que ya esten conectados
+            $query->whereNotIn('id',$excVC);
+            // Busqueda por LIKE
+            if(isset($val))
+            {
+                $q   = strtolower($val);
+                $query->whereRaw('Lower(name) like "%' . $q . '%"');
+            }
+        })->withCount('userTo')->get();
+        
+        $data = [];
+        $root = new ApiController;
+
+        foreach ($req as $key) {
+            
+            /****** Ratings ********/
+                $totalRate    = ValueConn::where('user_to',$key->id)->count();
+                $totalRateSum = ValueConn::where('user_to',$key->id)->sum('rate');
+                
+                if($totalRate > 0)
+                {
+                    $avg          = $totalRateSum / $totalRate;
+                }
+                else
+                {
+                    $avg           = 0 ;
+                }
+            /****** Ratings ********/
+
+            // Creamos array
+            $data[] = [ 
+                'id'    => $key->id,
+                'name'  => $key->name,
+                'last_name' => $key->last_name,
+                'email' => $key->email,
+                'birthday'  => $key->birthday,
+                'pic_profile' => asset('/upload/users/'.$key->pic_profile),
+                'count' => $key->user_to_count,
+                'rating' => $avg,
+            ];
+        }
+
+
+        return $data;
+    }
 }

@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
+
+
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\OpenpayController;
-use App\Http\Controllers\NodejsServer;
-use App\Http\Controllers\WhatsAppCloud;
+use App\Http\Controllers\BackServer; 
 
 use Illuminate\Http\Request;
 use Auth; 
@@ -15,6 +15,8 @@ use App\Models\AppUser;
 use App\Models\Banner;
 use App\Models\Events;
 use App\Models\Surveys; 
+use App\Models\ValueConn;
+
 use DB;
 use Validator;
 use Redirect;
@@ -32,7 +34,6 @@ class ApiController extends Controller
 
 		return response()->json(['data' => $res->getAppData()]);
 	}
-   
 
 	public function getDataInit()
 	{
@@ -48,12 +49,15 @@ class ApiController extends Controller
 		}
 	}
 
-	public function homepage_init($city_id)
+	public function homepage_init($user_id)
 	{
 		$banner = new Banner;
 		$events = new Events;
+		$connects = new AppUser;
+
 		$data = [
-			'admin'		=> Admin::find(1),
+			'value_conn'	=> $connects->getConnections($user_id),
+			'admin'			=> Admin::find(1),
 			'banners_top'   => $banner->getAppDataTop(),
 			'banners_mid'   => $banner->getAppDataMiddle(),
 			'events'   		=> $events->getAppData()
@@ -98,16 +102,33 @@ class ApiController extends Controller
 
 	public function userinfo($id)
 	{
-		try {
-			$user = new AppUser; 
+		try { 
+			$data	= AppUser::find($id);
+			$connVF = ValueConn::where('app_user_id', $id)->count();
+			$connvT = ValueConn::where('user_to', $id)->count();
+			$exceptData = ['pswfacebook','created_at','updated_at','otp','refered'];
+			// Cambiamos los datos de la imagen			
+			$img_exp = $data->pic_profile;
+            $dat     = collect($data)->except($exceptData)->except('pic_profile');
+            $pic_profile = asset('upload/users/'.$img_exp);
+            // Agregamos los nuevos datos
+			$dat->put( 'pic_profile' , $pic_profile );
+			$dat->put( 'connVF' , $connVF );
+			$dat->put( 'connvT' , $connvT );
+			
 			return response()->json([
-				'data' => AppUser::find($id)
+				'data' => $dat, 
 			]);
 		} catch (\Exception $th) {
 			return response()->json(['data' => 'error', 'error' => $th->getMessage()]);
 		}
 	}
 	
+	public function updateInfo($id,Request $Request)
+	{
+		$res = new AppUser;
+		return response()->json($res->updateInfo($Request->all(),$id));
+	}
 
 	/**
      * Funciones de registro
@@ -137,5 +158,87 @@ class ApiController extends Controller
 		return response()->json($res->SignPhone($Request->all()));
 	}
 
+	/**
+	 * Funciones para conexiones de valor
+	 */
+	public function getUser($user)
+	{
+		try {
+			$data = AppUser::where('id',$user)->withCount('userTo')->first();
+			$exceptData = ['password','pswfacebook','created_at','updated_at','otp','refered'];
+        
+			$img_exp = $data->pic_profile;
+            $dat     = collect($data)->except($exceptData)->except('pic_profile');
+            $pic_profile = asset('upload/users/'.$img_exp);
+            $newData = $dat->put( 'pic_profile' , $pic_profile );
 
+			return response()->json([
+				'data' => $newData
+			]);
+		} catch (\Exception $th) {
+			return response()->json(['data' => 'error', 'error' => $th->getMessage()]);
+		}
+	}
+
+	public function createConn(Request $Request)
+	{
+		try {
+			$input = $Request->all();
+			$lim_data_createConn = new ValueConn;
+			// Creamos la conexion en el primer servidor
+			$req = $lim_data_createConn->create($input);
+
+			if ($req) {
+				// Creamos la conexion en tiempo real en el backServer
+				$backServer = new BackServer;
+				// Obtenemos Informacion de usuarios
+				$initUser = $this->getUser($req->app_user_id);
+				$endUser  = $this->getUser($req->user_to);
+				// Creamos nuevo array
+				$newData = [
+					'userFrom' => $initUser->original['data'],
+					'userTo' => $endUser->original['data'],
+					'rating' => $req->rate,
+					'table_id'	=> $req->id,
+					'created_at' => $req->created_at
+				];
+				// Agregamos
+				$addBack = $backServer->CreateConn($newData);
+				// Actualizamos principal
+				$lims_date_updateConn = ValueConn::find($req->id);
+				$lims_date_updateConn->external_id = $addBack['data'];
+				$lims_date_updateConn->save();
+			}
+
+			return response()->json([
+				'data' => true
+			]);
+		} catch (\Exception $th) {
+			return response()->json(['data' => 'error', 'error' => $th->getMessage()]);
+		}
+	}
+
+	public function getConnections($id)
+	{
+		try {
+			$req = new AppUser;
+			return response()->json([
+				'data' => $req->getConnectionsByUserId($id)
+			]);
+		} catch (\Exception $th) {
+			return response()->json(['data' => 'error', 'error' => $th->getMessage()]);
+		}
+	}
+
+	public function search($query)
+	{
+		try {
+			$req = new AppUser;
+			return response()->json([
+				'data' => $req->searchByUserName($query)
+			]);
+		} catch (\Exception $th) {
+			return response()->json(['data' => 'error', 'error' => $th->getMessage()]);
+		}
+	}
 }

@@ -44,5 +44,16 @@ Route::group(array('namespace' => 'App\Http\Controllers\Api'), function () {
     Route::post('Newlogin','ApiController@Newlogin'); 
     Route::post('loginFb','ApiController@loginFb');
     Route::get('userinfo/{id}','ApiController@userinfo');
+    Route::post('updateInfo/{id}','ApiController@updateInfo');
 
+
+    /**
+     * 
+     * Funciones para obtener usuario en especifico y conexiones
+     * 
+     */
+    Route::get('getUser/{user}','ApiController@getUser');
+    Route::post('createConn','ApiController@createConn');
+    Route::get('getConnections/{id}','ApiController@getConnections');
+    Route::get('search/{query}','ApiController@search');
 });

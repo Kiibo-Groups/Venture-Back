@@ -103,6 +103,11 @@ class ReadQRController extends Controller
     {
 
         return response()->json($request->all());
-        
+
+    }
+
+    public function validateqr(Request $request)
+    {
+        return response()->json($request->all());
     }
 }

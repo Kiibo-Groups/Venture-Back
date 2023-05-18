@@ -53,6 +53,7 @@ Route::prefix(env('user'))->namespace('User')->group(static function() {
         Route::resource('qr_reader','\App\Http\Controllers\Admin\ReadQRController');
         Route::get('/qr_reader',  [App\Http\Controllers\Admin\ReadQRController::class, 'index'])->name('qr_reader');
         Route::post('/reader',  [App\Http\Controllers\Admin\ReadQRController::class, 'reader'])->name('reader');
+        Route::post('/validateqr',  [App\Http\Controllers\Admin\ReadQRController::class, 'validateqr'])->name('validateqr');
         Route::get('/qr_reader/delete/{id}',[App\Http\Controllers\Admin\ReadQRController::class, 'destroy']);
         Route::get('/qr_reader/status/{id}',[App\Http\Controllers\Admin\ReadQRController::class, 'status']);
         
