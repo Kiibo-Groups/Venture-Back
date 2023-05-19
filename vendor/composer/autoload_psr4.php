@@ -9,6 +9,7 @@ return array(
     'voku\\' => array($vendorDir . '/voku/portable-ascii/src/voku'),
     'Zxing\\' => array($vendorDir . '/khanamiryan/qrcode-detector-decoder/lib'),
     'Whoops\\' => array($vendorDir . '/filp/whoops/src/Whoops'),
+    'Webpatser\\Uuid\\' => array($vendorDir . '/webpatser/laravel-uuid/src/Webpatser/Uuid'),
     'Webmozart\\Assert\\' => array($vendorDir . '/webmozart/assert/src'),
     'TijsVerkoyen\\CssToInlineStyles\\' => array($vendorDir . '/tijsverkoyen/css-to-inline-styles/src'),
     'Tests\\' => array($baseDir . '/tests'),

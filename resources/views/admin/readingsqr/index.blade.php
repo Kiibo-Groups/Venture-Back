@@ -37,7 +37,7 @@
 
                     <iframe id="iframeScan" src="https://embed.lottiefiles.com/animation/5427"></iframe>
 
-                    <video id="preview" style="display:none;width: 100%; height: 250px; background: rgb(0, 0, 0); border-radius: 45px; "></video> 
+                    <video id="preview" style="display: none; width: 360px; height: 500px; background: rgb(0, 0, 0); border-radius: 45px; transform: scaleX(-1);margin: auto;"></video> 
                     <div class="card-content" style="padding-top: 25px">
                         <button type="button" class="btn btn-success waves-effect waves-light" onclick="initSacn()">
                             <span id="label-scann">

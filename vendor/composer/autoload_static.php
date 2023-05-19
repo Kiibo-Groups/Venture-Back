@@ -52,6 +52,7 @@ class ComposerStaticInit2e16e0e669b4714ed5e444cafae924d1
         'W' => 
         array (
             'Whoops\\' => 7,
+            'Webpatser\\Uuid\\' => 15,
             'Webmozart\\Assert\\' => 17,
         ),
         'T' => 
@@ -195,6 +196,10 @@ class ComposerStaticInit2e16e0e669b4714ed5e444cafae924d1
         'Whoops\\' => 
         array (
             0 => __DIR__ . '/..' . '/filp/whoops/src/Whoops',
+        ),
+        'Webpatser\\Uuid\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/webpatser/laravel-uuid/src/Webpatser/Uuid',
         ),
         'Webmozart\\Assert\\' => 
         array (
@@ -563,6 +568,7 @@ class ComposerStaticInit2e16e0e669b4714ed5e444cafae924d1
         'App\\Http\\Controllers\\Auth\\RegisterController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/RegisterController.php',
         'App\\Http\\Controllers\\Auth\\ResetPasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/ResetPasswordController.php',
         'App\\Http\\Controllers\\Auth\\VerificationController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/VerificationController.php',
+        'App\\Http\\Controllers\\BackServer' => __DIR__ . '/../..' . '/app/Http/Controllers/BackServer.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
         'App\\Http\\Kernel' => __DIR__ . '/../..' . '/app/Http/Kernel.php',
         'App\\Http\\Middleware\\Authenticate' => __DIR__ . '/../..' . '/app/Http/Middleware/Authenticate.php',
@@ -583,6 +589,7 @@ class ComposerStaticInit2e16e0e669b4714ed5e444cafae924d1
         'App\\Models\\QrReader' => __DIR__ . '/../..' . '/app/Models/QrReader.php',
         'App\\Models\\Settings' => __DIR__ . '/../..' . '/app/Models/Settings.php',
         'App\\Models\\Surveys' => __DIR__ . '/../..' . '/app/Models/Surveys.php',
+        'App\\Models\\ValueConn' => __DIR__ . '/../..' . '/app/Models/ValueConn.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
         'App\\Providers\\AuthServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AuthServiceProvider.php',
         'App\\Providers\\BroadcastServiceProvider' => __DIR__ . '/../..' . '/app/Providers/BroadcastServiceProvider.php',
@@ -5593,6 +5600,8 @@ class ComposerStaticInit2e16e0e669b4714ed5e444cafae924d1
         'Webmozart\\Assert\\Assert' => __DIR__ . '/..' . '/webmozart/assert/src/Assert.php',
         'Webmozart\\Assert\\InvalidArgumentException' => __DIR__ . '/..' . '/webmozart/assert/src/InvalidArgumentException.php',
         'Webmozart\\Assert\\Mixin' => __DIR__ . '/..' . '/webmozart/assert/src/Mixin.php',
+        'Webpatser\\Uuid\\Uuid' => __DIR__ . '/..' . '/webpatser/laravel-uuid/src/Webpatser/Uuid/Uuid.php',
+        'Webpatser\\Uuid\\UuidServiceProvider' => __DIR__ . '/..' . '/webpatser/laravel-uuid/src/Webpatser/Uuid/UuidServiceProvider.php',
         'Whoops\\Exception\\ErrorException' => __DIR__ . '/..' . '/filp/whoops/src/Whoops/Exception/ErrorException.php',
         'Whoops\\Exception\\Formatter' => __DIR__ . '/..' . '/filp/whoops/src/Whoops/Exception/Formatter.php',
         'Whoops\\Exception\\Frame' => __DIR__ . '/..' . '/filp/whoops/src/Whoops/Exception/Frame.php',

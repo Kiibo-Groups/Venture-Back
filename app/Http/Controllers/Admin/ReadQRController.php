@@ -24,7 +24,7 @@ class ReadQRController extends Controller
      */
     public function index()
     {
-        $data = QRGen::withCount('list')->Orderby('id','DESC')->get();  
+        $data = QRGen::Orderby('id','DESC')->get();  
  
         return view($this->folder.'readingsqr.index', [ 
             'data' => $data,

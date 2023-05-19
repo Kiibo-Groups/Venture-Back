@@ -27,7 +27,7 @@ use Excel;
 use Stripe;
 
 use QrCode;
-
+use Uuid;
 
 class ApiController extends Controller
 {
@@ -307,14 +307,12 @@ class ApiController extends Controller
 
 				for ($i=0; $i < $tot; $i++) { 
 					// Generamos Codigo Unico identificador
-						$pattern = '1234567890';
-						$key = '0'.$i.'x00'.$id.substr(md5($pattern),0,3).substr(md5(date('Y-m')),0,5);
+					$pattern = substr(time(),0,3).substr(Uuid::generate()->string,0,8);
+					$key = '0'.$id.'x'.$i.substr(md5($pattern),0,6);
 					// Generamos el QR
 					$qr_data   = base64_encode(QrCode::format('png')
 								->size(200)
 								->generate(strtoupper($key)));
-
-					
 					// Guardamos en la tabla
 					$lims_data_listqr = new ListQR;
 					$lims_data_listqr->qr_id = $el;
