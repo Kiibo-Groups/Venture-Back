@@ -182,6 +182,15 @@ class AppUser extends Authenticatable
                 $add->password    = $data['password'];
             }
 
+            if (isset($data['pic_profile'])) {
+                // Si la imagen anterior es diferente a la defalult la eliminamos
+                if ($add->pic_profile != 'not_available.png') {
+                    unlink("upload/users/".$add->pic_profile);
+                }
+                
+                $add->pic_profile    = $data['pic_profile'];
+            }
+
             $add->save();
 
             return ['msg' => 'done', 'user_id' => $add->id, 'data' => $add];

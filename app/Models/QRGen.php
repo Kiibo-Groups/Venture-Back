@@ -17,8 +17,10 @@ class QRGen extends Model
         'status', // activo/inactivo
     ];
 
-    public function list()
+   
+
+    public function getAll()
     {
-        return $this->hasMany('App\Models\ListQR')->orderBy('created_at');
+        return QRGen::where('status',1)->get();   
     }
 }

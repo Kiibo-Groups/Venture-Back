@@ -11,11 +11,12 @@ class ListQR extends Model
     protected $table = 'list_qr'; 
 
     protected $fillable =[
-        'q_r_gen_id', // Tipo de QR generado enlazado a tabla QRGen
+        'qr_id', // Tipo de QR generado enlazado a tabla QRGen
         'qr_data', // Info del QR
+        'decript', // Info decript
         'user_id', // Id del usuario vinculado
         'status', // activo/inactivo
     ];
-
+ 
     
 }

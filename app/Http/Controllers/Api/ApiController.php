@@ -16,6 +16,9 @@ use App\Models\Banner;
 use App\Models\Events;
 use App\Models\Surveys; 
 use App\Models\ValueConn;
+use App\Models\QrReader;
+use App\Models\QRGen;
+use App\Models\ListQR;
 
 use DB;
 use Validator;
@@ -23,6 +26,7 @@ use Redirect;
 use Excel;
 use Stripe;
 
+use QrCode;
 
 
 class ApiController extends Controller
@@ -239,6 +243,101 @@ class ApiController extends Controller
 			]);
 		} catch (\Exception $th) {
 			return response()->json(['data' => 'error', 'error' => $th->getMessage()]);
+		}
+	}
+
+	/**
+	 * Generacion y manejo de Codigos QR
+	 */
+	public function getCatsQR()
+	{
+		try {
+			$req = new QRGen;
+			return response()->json([
+				'data' => $req->getAll()
+			]);
+		} catch (\Exception $th) {
+			return response()->json(['data' => 'error', 'error' => $th->getMessage()]);
+		}
+	}
+
+	public function getAllQR($id)
+	{
+		try {
+			$list = ListQR::where('user_id',$id)->get();
+			$data = [];
+			foreach ($list as $key) {
+				
+				$qrInfo = QRGen::find($key->qr_id);
+
+				$data[] = [
+					'info' => $qrInfo->descript,
+					'date_limit' => $qrInfo->date_limit,
+					'date_create' => $key->created_at->diffForHumans(),
+					'status' => $key->status,
+					'qr' => $key->qr_data
+				];
+			}
+			return response()->json([
+				'status' => 200,
+				'data' => $data
+			]);
+		} catch (\Throwable $th) {
+			return response()->json(['status' => 'error', 'error' => $th->getMessage()]);
+		}
+	}
+
+	public function getQRCode($el, $id)
+	{
+		
+		try {
+			$listQR = ListQR::where('user_id',$id)->where('qr_id',$el)->count();
+			$options = QRGen::find($el);
+			$tot     = $options->counter;
+			
+			if ($listQR >= $tot) { // ya se ha generado un codigo QR para este usuario y para este QR
+				return response()->json([
+					'status' => 'duplicate', 
+					'error' => "Este QR ya ha sido usado anteriormente."
+				]);
+			}else {
+				// Generamos los elementos
+				
+				$codeQR  = [];
+
+				for ($i=0; $i < $tot; $i++) { 
+					// Generamos Codigo Unico identificador
+						$pattern = '1234567890';
+						$key = '0'.$i.'x00'.$id.substr(md5($pattern),0,3).substr(md5(date('Y-m')),0,5);
+					// Generamos el QR
+					$qr_data   = base64_encode(QrCode::format('png')
+								->size(200)
+								->generate(strtoupper($key)));
+
+					
+					// Guardamos en la tabla
+					$lims_data_listqr = new ListQR;
+					$lims_data_listqr->qr_id = $el;
+					$lims_data_listqr->qr_data = $qr_data;
+					$lims_data_listqr->decript = strtoupper($key);
+					$lims_data_listqr->user_id = $id;
+					$lims_data_listqr->status  = 0;
+					
+					$lims_data_listqr->save();
+					// Guardamos en el array para mostrar al cliente
+					$codeQR[] = $qr_data;
+				}
+
+
+				return response()->json([
+					'status' => 200,
+					'data' => $codeQR
+				]);
+			}
+
+		
+		} catch (\Exception $th) {
+			return response()->json(['status' => 'error', 'error' => $th->getMessage()]);
 		}
 	}
 }

@@ -56,4 +56,13 @@ Route::group(array('namespace' => 'App\Http\Controllers\Api'), function () {
     Route::post('createConn','ApiController@createConn');
     Route::get('getConnections/{id}','ApiController@getConnections');
     Route::get('search/{query}','ApiController@search');
+
+    /**
+     * 
+     * Funciones para Generacion y manejo de QR
+     * 
+     */
+    Route::get('getCatsQR','ApiController@getCatsQR');
+    Route::get('getAllQR/{id}','ApiController@getAllQR');
+    Route::get('getQRCode/{el}/{id}','ApiController@getQRCode');
 });
