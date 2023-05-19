@@ -108,6 +108,32 @@ class ReadQRController extends Controller
 
     public function validateqr(Request $request)
     {
-        return response()->json($request->all());
+        try {
+            $code = $request->all()[0];
+            $valid = ListQR::where('decript',$code)->first();
+
+            if ($valid) {
+
+                $valid->status = 1;
+                $valid->save();
+
+                $reader = new QrReader;
+                $reader->user_id = $valid->user_id;
+                $reader->qr_id   = $valid->id;
+                $reader->save();
+
+                return response()->json([
+					'status' => 200
+				]);
+            }else {
+                return response()->json([
+					'status' => 'error',
+					'data' => 'Codigo no encontrado'
+				]);
+            }
+
+        } catch (\Exception $th) {
+			return response()->json(['status' => 'error', 'error' => $th->getMessage()]);
+		}
     }
 }

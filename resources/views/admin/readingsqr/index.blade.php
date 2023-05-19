@@ -24,8 +24,6 @@
 <!-- Start Content-->
 <div class="container-fluid">
     <div class="row justify-content-md-center">
-        
-
         <div class="col-sm-8">
             <div class="card card-reader">
                 <div class="card-body text-center">
@@ -49,8 +47,8 @@
             </div>
         </div>
     </div>    
-</div><!-- container-fluid -->
-
+</div>
+<!-- container-fluid -->
 @endsection 
 
 
@@ -59,7 +57,7 @@
 <script type="text/javascript" src="{{ asset('resources/js/instascan.min.js') }}"></script>
  
 <script>
-    var sound = new Audio("barcode.wav");
+    var sound = new Audio('{{ asset("resources/data/scan.mp3") }}');
     var ScannFlag = false; 
     var Input = document.getElementById('input-scan');
 
@@ -112,7 +110,7 @@
      * Eventos del Input para el lector fisico
      * 
      **/
-     Input.addEventListener("input", function(content) {
+    Input.addEventListener("input", function(content) {
         QRValidate(content.target.value);
     });
     
@@ -124,12 +122,11 @@
      **/
     scanner.addListener("scan", function(content) {
         sound.play();
-        console.log(content);
-        alert(content);
         QRValidate(content);
     });
 
     function initSacn(){
+        
         let video   = document.getElementById('preview');
         let Iframe  = document.getElementById('iframeScan');
         let label   = document.getElementById('label-scann');
@@ -179,6 +176,28 @@
         .then(response => response.json())
         .then((data) => {
             console.log(data)
+            
+            if (data.status == 200) {
+                Swal.fire({
+                    icon: "success",
+                    title: 'Confirmado',
+                    text: "El código ha sido validado con éxito.",
+                    type: 'success',
+                    showCancelButton: false,
+                    showConfirmButton: false,
+                    timer: 1500,
+                });
+            }else {
+                Swal.fire({
+                    icon: "error",
+                    title: 'Código no valido.',
+                    text: "El código no ha podido ser validado.",
+                    type: 'error',
+                    showCancelButton: false,
+                    showConfirmButton: false,
+                    timer: 1500,
+                });
+            }
         });
 
  

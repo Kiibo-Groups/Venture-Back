@@ -264,7 +264,7 @@ class ApiController extends Controller
 	public function getAllQR($id)
 	{
 		try {
-			$list = ListQR::where('user_id',$id)->get();
+			$list = ListQR::where('user_id',$id)->where('status',0)->get();
 			$data = [];
 			foreach ($list as $key) {
 				
@@ -272,6 +272,7 @@ class ApiController extends Controller
 
 				$data[] = [
 					'info' => $qrInfo->descript,
+					'decript' => $key->decript,
 					'date_limit' => $qrInfo->date_limit,
 					'date_create' => $key->created_at->diffForHumans(),
 					'status' => $key->status,
