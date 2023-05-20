@@ -21,10 +21,10 @@ class QRController extends Controller
      */
     public function index()
     {
-        $data = QRGen::Orderby('id','DESC')->get();  
+        $data = new QRGen;  
  
         return view($this->folder.'qr.index', [ 
-            'data' => $data,
+            'data' => collect($data->GetQRAdmin()),
             'link' 	=> '/qr_generator/'
         ]); 
         
@@ -130,4 +130,13 @@ class QRController extends Controller
 
 		return redirect('/qr_generator')->with('message','Estado actualizado con éxito.');
 	}
+
+    public function list_qr()
+    {
+        $data = new QRGen;  
+ 
+        return view($this->folder.'qr.listqr', [ 
+            'data' => collect($data->GetListQRAdmin())
+        ]); 
+    }
 }

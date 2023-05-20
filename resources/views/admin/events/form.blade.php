@@ -21,7 +21,7 @@
                    <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="portada">Portada</label>
-                        <input type="file" name="portada" id="portada" class="form-control" required="required" @if (!$data->id) required="required" @endif>
+                        <input type="file" name="portada" id="portada" class="form-control" @if (!$data->id) required="required" @endif>
                     </div>
 
                     <div class="col-md-6 mb-3">

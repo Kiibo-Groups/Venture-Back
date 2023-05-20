@@ -22,7 +22,7 @@ Route::prefix(env('user'))->namespace('User')->group(static function() {
         |-----------------------------------------
         |Dashboard and Account Setting & Logout
         |-----------------------------------------
-        */ 
+        */  
         Route::get('/',[App\Http\Controllers\Admin\AdminController::class, 'home'])->name('dash');
         Route::get('dash',[App\Http\Controllers\Admin\AdminController::class, 'home'])->name('dash');
         Route::get('settings',[App\Http\Controllers\Admin\AdminController::class, 'settings'])->name('settings'); 
@@ -38,9 +38,9 @@ Route::prefix(env('user'))->namespace('User')->group(static function() {
         */ 
         Route::resource('qr_generator','\App\Http\Controllers\Admin\QRController');
         Route::get('/qr_generator',  [App\Http\Controllers\Admin\QRController::class, 'index'])->name('qr_generator');
+        Route::get('/list_qr', [App\Http\Controllers\Admin\QRController::class, 'list_qr'])->name('list_qr');
         Route::get('/qr_generator/add',  [App\Http\Controllers\Admin\QRController::class, 'create'])->name('new_qr');
         Route::post('/qr_generator/store', [App\Http\Controllers\Admin\QRController::class, 'store'])->name('add_qr');
-        Route::get('/qr_generator/list_qr', [App\Http\Controllers\Admin\QRController::class, 'list_qr'])->name('list_qr');
         Route::get('/qr_generator/delete/{id}',[App\Http\Controllers\Admin\QRController::class, 'destroy']);
         Route::get('/qr_generator/status/{id}',[App\Http\Controllers\Admin\QRController::class, 'status']);
         

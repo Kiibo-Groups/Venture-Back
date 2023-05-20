@@ -24,7 +24,9 @@
 
                             @foreach ($data as $row)
                                 <tr>
-                                    <td><img src="{{ Asset('upload/users/' . $row->pic_profile) }}" height="70"></td>
+                                    <td>
+                                        <img src="{{ Asset('upload/users/' . $row->pic_profile) }}" class="rounded-circle avatar-md img-thumbnail mb-2" alt="profile-image">
+                                    </td>
                                     <td>
                                         {{ $row->name }} {{ $row->last_name }}
                                     </td>

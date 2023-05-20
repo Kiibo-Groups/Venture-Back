@@ -35,25 +35,25 @@
                         <tbody>
                             @foreach($data as $row)
                             <tr>
-                                <td>{{ $row->id }}</td>
-                                <td>{{ $row->descript }}</td>
-                                <td>{{ $row->counter }}</td>
-                                <td>{{ $row->list_count }}</td>
-                                <td>{{ $row->date_limit }}</td>
+                                <td>{{ $row['id'] }}</td>
+                                <td>{{ $row['descript'] }}</td>
+                                <td>{{ $row['counter'] }}</td>
+                                <td><a href="{{ route('list_qr') }}">{{ $row['generados'] }}</a></td>
+                                <td>{{ $row['date_limit'] }}</td>
                                 <td>
-                                    @if ($row->status == 1)
+                                    @if ($row['status'] == 1)
                                         <button type="button"
                                             class="btn btn-success width-xs waves-effect waves-light"
-                                            onclick="confirmAlert('{{ Asset($link . 'status/' . $row->id) }}')">Activo</button>
+                                            onclick="confirmAlert('{{ Asset($link . 'status/' . $row['id']) }}')">Activo</button>
                                     @else
                                         <button type="button"
                                             class="btn btn-danger width-xs waves-effect waves-light"
-                                            onclick="confirmAlert('{{ Asset($link . 'status/' . $row->id) }}')">Inactivo</button>
+                                            onclick="confirmAlert('{{ Asset($link . 'status/' . $row['id']) }}')">Inactivo</button>
                                     @endif
                                 </td>
                                 <td>
                                     
-                                    <a href="{{ Asset($link . $row->id . '/edit') }}"
+                                    <a href="{{ Asset($link . $row['id'] . '/edit') }}"
                                         class="btn btn-success waves-effect waves-light btn m-b-15 ml-2 mr-2 btn-md"
                                         data-toggle="tooltip" data-placement="top"
                                         data-original-title="Editar"><i
@@ -63,7 +63,7 @@
                                         class="btn m-b-15 ml-2 mr-2 btn-md  btn btn-danger waves-effect waves-light"
                                         data-toggle="tooltip" data-placement="top"
                                         data-original-title="Eliminar"
-                                        onclick="deleteConfirm('{{ Asset($link . 'delete/' . $row->id) }}')"><i
+                                        onclick="deleteConfirm('{{ Asset($link . 'delete/' . $row['id']) }}')"><i
                                             class="mdi mdi-delete-forever"></i></button> 
                                 </td> 
                             </tr>

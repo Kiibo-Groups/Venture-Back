@@ -114,17 +114,25 @@ class ReadQRController extends Controller
 
             if ($valid) {
 
-                $valid->status = 1;
-                $valid->save();
+                if ($valid->status == 0) {
+                    
+                    $valid->status = 1;
+                    $valid->save();
 
-                $reader = new QrReader;
-                $reader->user_id = $valid->user_id;
-                $reader->qr_id   = $valid->id;
-                $reader->save();
+                    $reader = new QrReader;
+                    $reader->user_id = $valid->user_id;
+                    $reader->qr_id   = $valid->id;
+                    $reader->save();
 
-                return response()->json([
-					'status' => 200
-				]);
+                    return response()->json([
+                        'status' => 200
+                    ]);
+                }else {
+                    return response()->json([
+                        'status' => 400,
+                        'data' => 'Código ya canjeado'
+                    ]);
+                }
             }else {
                 return response()->json([
 					'status' => 'error',

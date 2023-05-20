@@ -11,15 +11,10 @@
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label for="counter" class="form-label">Elementos a generar por usuario</label>
-                        <input type="number" class="form-control slug-counter"  id="counter" name="counter" value="{{$data->counter}}">
+                        <label for="uuid" class="form-label">UUID del elemento</label>
+                        <input type="text" class="form-control slug-uuid"  id="uuid" name="uuid" value="{{$data->uuid}}">
                     </div>
-
-                    <div class="col-md-6 mb-3">
-                        <label for="date_limit" class="form-label">Fecha limite</label>
-                        <input class="form-control" id="date_limit" type="date" name="date_limit" value="{{ $data->date_limit }}">
-                    </div> 
-
+ 
                     <div class="col-md-6 mb-3">
                         <label class="example-select">Status</label>
                         <select name="status"  id="example-select" class="form-select" required="required">

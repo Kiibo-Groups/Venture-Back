@@ -179,6 +179,9 @@
                             <li>
                                 <a href="{{ route('beacons') }}">Listado</a>
                             </li>
+                            <li>
+                                <a href="{{ route('beacons.create') }}">Agregar Elemento</a>
+                            </li>
                         </ul>
                     </div>
                 </li>
@@ -201,7 +204,7 @@
                 </li>
                 <!-- Usuarios -->
 
-                <!-- staff -->
+                <!-- staff 
                 <li>
                     <a href="#staff" data-bs-toggle="collapse">
                         <i class="mdi mdi-bike-fast"></i>
@@ -219,7 +222,7 @@
                         </ul>
                     </div>
                 </li>
-                <!-- staff -->
+                 staff -->
             </ul>
 
         </div>

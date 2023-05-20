@@ -11,6 +11,7 @@ class Beacons extends Model
     protected $table = 'beacons'; 
 
     protected $fillable =[
+        'descript',
         'uuid',
         'status'
     ];

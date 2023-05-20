@@ -81,7 +81,17 @@ class AdminController extends Controller
 
 		$admin = new Admin; 
         
+
+        // return response()->json([
+        //     'overview' => $admin->overview(),
+        //     'chartUsersSign' => [
+        //         'month' => $admin->getMonthName(0),
+        //         'data' => $admin->chartUsersSign(1)['online']],
+        //     'admin' => $admin
+        // ]);
+
 		return View($this->folder.'dashboard.home',[
+            'overview' => $admin->overview(), 
             'admin' => $admin
         ]);
 	}

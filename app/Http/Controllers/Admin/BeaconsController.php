@@ -36,7 +36,10 @@ class BeaconsController extends Controller
      */
     public function create()
     {
-        //
+        return View($this->folder.'add',[
+			'data' => new Beacons,
+			'form_url' 	=> '/beacons'
+		]);
     }
 
     /**
@@ -47,7 +50,14 @@ class BeaconsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $input = $request->all();
+            $lims_data_beacons = new Beacons;
+            $lims_data_beacons->create($input);
+            return redirect('/beacons')->with('message','Elemento agregado con éxito.');
+        } catch (\Exception $th) {
+            return redirect('/beacons')->with('error','Error: '.$th->getMessage());
+        }
     }
 
     /**
@@ -58,7 +68,10 @@ class BeaconsController extends Controller
      */
     public function show($id)
     {
-        //
+        return View($this->folder.'add',[
+			'data' => Beacons::find($id),
+			'form_url' 	=> '/beacons'
+		]);
     }
 
     /**
@@ -69,7 +82,10 @@ class BeaconsController extends Controller
      */
     public function edit($id)
     {
-        //
+        return View($this->folder.'edit',[
+			'data' => Beacons::find($id),
+			'form_url' 	=> '/beacons/'.$id
+		]);
     }
 
     /**
@@ -81,7 +97,14 @@ class BeaconsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        try {
+            $input = $request->all();
+            $lims_data_beacons = Beacons::find($id);
+            $lims_data_beacons->update($input);
+            return redirect('/beacons')->with('message','Elemento actualizado con éxito.');
+        } catch (\Exception $th) {
+            return redirect('/beacons')->with('error','Error: '.$th->getMessage());
+        }
     }
 
     /**
@@ -92,6 +115,22 @@ class BeaconsController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $res = Beacons::find($id); 
+		$res->delete();
+		return redirect('/beacons')->with('message','Registro eliminado con éxito.');
     }
+
+    /*
+	|---------------------------------------------
+	|@Change Status
+	|---------------------------------------------
+	*/
+	public function status($id)
+	{
+		$res 			= Beacons::find($id);
+		$res->status 	= $res->status == 0 ? 1 : 0;
+		$res->save();
+
+		return redirect('/beacons')->with('message','Estado actualizado con éxito.');
+	}
 }

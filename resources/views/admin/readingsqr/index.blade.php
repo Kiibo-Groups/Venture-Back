@@ -126,7 +126,6 @@
     });
 
     function initSacn(){
-        
         let video   = document.getElementById('preview');
         let Iframe  = document.getElementById('iframeScan');
         let label   = document.getElementById('label-scann');
@@ -150,12 +149,10 @@
         }else {
             location.reload();
         }
-        
-        
     }
  
         
-        /**
+    /**
      * 
      * Peticion al Back para validar QR
      * 
@@ -187,10 +184,20 @@
                     showConfirmButton: false,
                     timer: 1500,
                 });
+            }else if (data.status == 400) {
+                Swal.fire({
+                    icon: "warning",
+                    title: 'Código no válido.',
+                    text: "El código que intentas canjear ya ha sido usando.",
+                    type: 'warning',
+                    showCancelButton: false,
+                    showConfirmButton: false,
+                    timer: 1500,
+                });
             }else {
                 Swal.fire({
                     icon: "error",
-                    title: 'Código no valido.',
+                    title: 'Código no válido.',
                     text: "El código no ha podido ser validado.",
                     type: 'error',
                     showCancelButton: false,

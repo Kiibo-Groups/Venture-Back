@@ -163,12 +163,11 @@ class Admin extends Authenticatable
 
 	public function overview()
 	{
-		return [
-			'store' 	=> User::where('status',0)->count(),
-			'order'		=> Order::count(),
-			'complete'  => Order::where('status',6)->count(),
-			'month'  	=> Order::whereDate('created_at','LIKE',date('Y-m').'%')->count(),
-			'user'  	=> AppUser::count(),
+		return [ 
+			'users'  		=> AppUser::count(),
+			'monthConn'  	=> ValueConn::whereDate('created_at','LIKE',date('Y-m').'%')->count(),
+			'beaconOn'		=> Beacons::where('status',0)->count(),
+			'monthQrR'		=> QrReader::whereDate('created_at','LIKE',date('Y-m').'%')->count(),
 		];
 	}
 
@@ -186,52 +185,23 @@ class Admin extends Authenticatable
 		return $type == 0 ? date('l') : date('l',strtotime(date('Y').'- '.$type.' day'));
 	}
 
-	public function chart($type,$sid = 0)
+	public function chartUsersSign($type)
 	{
 		$month      = date('Y-m',strtotime(date('Y-m').' - '.$type.' month'));
 		
-		$order   = Order::where(function($query) use($sid){
+		$online   = AppUser::where('status',0)->whereDate('created_at','LIKE',$month.'%')->count();
+		$offline  = AppUser::where('status',1)->whereDate('created_at','LIKE',$month.'%')->count();
 
-			if($sid > 0)
-			{
-				$query->where('store_id',Auth::user()->id);
-			}
-
-		})->where('status',6)->whereDate('created_at','LIKE',$month.'%')->count();
-
-
-		$cancel  = Order::where(function($query) use($sid){
-
-			if($sid > 0)
-			{
-				$query->where('store_id',Auth::user()->id);
-			}
-
-		})->where('status',2)->whereDate('created_at','LIKE',$month.'%')->count();
-
-		return ['order' => $order,'cancel' => $cancel];
+		return ['online' => $online,'offline' => $offline];
 	}
 
-	public function storeChart()
+	public function chartConnections($type)
 	{
-		$storeID = Order::where('status',6)->pluck('store_id')->toArray();
+		$month      = date('Y-m',strtotime(date('Y-m').' - '.$type.' month'));
+		
+		$online   = ValueConn::whereDate('created_at','LIKE',$month.'%')->count(); 
 
-
-		$data = [];
-
-		foreach(array_unique($storeID) as $sid)
-		{
-			$user = User::find($sid);
-
-			if(isset($user->id))
-			{
-				$data[] = ['name' => preg_replace('([^A-Za-z0-9])', '', $user->name),'order' => Order::where('store_id',$sid)->where('status',6)->count()];
-			}
-		}	
-
-		 arsort($data);
-
-		 return $data;
+		return ['online' => $online];
 	}
 
 	public function getStoreData($data,$index,$type)

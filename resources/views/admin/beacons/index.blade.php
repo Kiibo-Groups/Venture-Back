@@ -22,6 +22,7 @@
                         <thead>
                         <tr>
                             <th>ID</th>
+                            <th>Descripción</th>
                             <th>UUID</th>
                             <th>Status</th>
                             <th style="text-align: right">Opciones</th>
@@ -33,7 +34,8 @@
                             @foreach($data as $row)
                             <tr>
                                 <td>{{ $row->id }}</td>
-                                <td>{{ $row->UUID }}</td>
+                                <td>{{ $row->descript }}</td>
+                                <td>{{ $row->uuid }}</td>
                                 <td>
                                     @if ($row->status == 1)
                                         <button type="button"
@@ -45,8 +47,7 @@
                                             onclick="confirmAlert('{{ Asset($link . 'status/' . $row->id) }}')">Inactivo</button>
                                     @endif
                                 </td>
-                                <td>
-                                    
+                                <td style="text-align: right">
                                     <a href="{{ Asset($link . $row->id . '/edit') }}"
                                         class="btn btn-success waves-effect waves-light btn m-b-15 ml-2 mr-2 btn-md"
                                         data-toggle="tooltip" data-placement="top"
