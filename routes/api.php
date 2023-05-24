@@ -21,7 +21,7 @@ Route::group(array('namespace' => 'App\Http\Controllers\Api'), function () {
      */
     Route::get('welcome','ApiController@welcome');
     Route::get('getDataInit','ApiController@getDataInit');
-
+    Route::get('GetSurveysAssign/{id}','ApiController@GetSurveysAssign');
     
     /**
      * Datos iniciales para usuarios registrados
@@ -65,4 +65,12 @@ Route::group(array('namespace' => 'App\Http\Controllers\Api'), function () {
     Route::get('getCatsQR','ApiController@getCatsQR');
     Route::get('getAllQR/{id}','ApiController@getAllQR');
     Route::get('getQRCode/{el}/{id}','ApiController@getQRCode');
+
+    /**
+     * 
+     * Funciones para obtencion de Beacons
+     * 
+     */
+    Route::get("getAllBeacons","ApiController@getAllBeacons");
+    Route::get('BeaconPushNot/{beacon}/{id}','ApiController@beaconPushNot');
 });

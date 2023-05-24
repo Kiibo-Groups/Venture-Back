@@ -15,5 +15,15 @@ class Beacons extends Model
         'uuid',
         'status'
     ];
+
+    public function getSigners()
+    {
+        return $this->hasMany('App\Models\BeaconsSign')->orderBy('created_at');
+    }
+
+    public function getAll()
+    {
+        return Beacons::where('status',1)->get();
+    }
  
 }

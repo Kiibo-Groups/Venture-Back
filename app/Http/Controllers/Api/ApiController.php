@@ -15,10 +15,13 @@ use App\Models\AppUser;
 use App\Models\Banner;
 use App\Models\Events;
 use App\Models\Surveys; 
+use App\Models\SurveysAssign;
 use App\Models\ValueConn;
 use App\Models\QrReader;
 use App\Models\QRGen;
 use App\Models\ListQR;
+use App\Models\Beacons;
+use App\Models\BeaconsSign;
 
 use DB;
 use Validator;
@@ -29,6 +32,7 @@ use Stripe;
 use QrCode;
 use Uuid;
 
+use DOMDocument;
 class ApiController extends Controller
 {
 
@@ -43,11 +47,9 @@ class ApiController extends Controller
 	{
 		
 		try {
-			$data = [
+			return response()->json([
 				'admin'		=> Admin::find(1)
-			];
-	
-			return response()->json(['data' => $data]);
+			]);
 		} catch (\Exception $th) {
 			return response()->json(['data' => 'error', 'error' => $th->getMessage()]);
 		}
@@ -68,6 +70,45 @@ class ApiController extends Controller
 		];
 
 		return response()->json(['data' => $data]);
+	}
+
+	public function GetSurveysAssign($id)
+	{
+		try {
+
+			$survs = SurveysAssign::where('user_id', $id)->get();
+			$data = [];
+			foreach ($survs as $key) {
+
+				$row  = Surveys::find($key->surveys_id);
+
+				$grabbed_src = "";
+				$html = $row->script;
+				$dom = new DOMDocument;
+				$dom->loadHTML($html);
+				$nodes = $dom->getElementsByTagName("script");
+				foreach ($nodes as $node)
+				{
+					$attributes = $node->attributes;
+					foreach ( $attributes as $attr )
+					{
+						if ( $attr->name == "src" ) $grabbed_src = $attr->value;
+					}
+				} 
+
+				$data[] = [ 
+					'survAssign_id' => $key->id,
+					'survey_id' => $key->surveys_id,
+					'script'    => $grabbed_src
+				];
+			}
+
+			return response()->json([
+				'data'		=> $data
+			]);
+		} catch (\Exception $th) {
+			return response()->json(['data' => 'error', 'error' => $th->getMessage()]);
+		}
 	}
 
 	/**
@@ -337,6 +378,56 @@ class ApiController extends Controller
 		
 		} catch (\Exception $th) {
 			return response()->json(['status' => 'error', 'error' => $th->getMessage()]);
+		}
+	}
+
+	/**
+	 * Funciones para Beacons
+	 */
+	public function getAllBeacons()
+	{
+
+		try {
+			$req = new Beacons;
+			return response()->json([
+				'data' => $req->getAll()
+			]);
+		} catch (\Exception $th) {
+			return response()->json(['data' => 'error', 'error' => $th->getMessage()]);
+		}
+
+	}
+
+	public function BeaconPushNot($beacon_id,$user_id)
+	{
+
+		try {
+			// Guardamos el registro
+			$chkUser = BeaconsSign::where('user_id',$user_id)->where('beacons_id',$beacon_id)->first();
+			if (isset($chkUser)) {
+				$lims_data_braconUPD = BeaconsSign::find($chkUser->id);
+				$lims_data_braconUPD->update([
+					'user_id' => $user_id,
+					'beacons_id' => $beacon_id
+				]);
+			}else {
+				$lims_data_braconNew = new BeaconsSign;
+				$lims_data_braconNew->create([
+					'user_id' => $user_id,
+					'beacons_id' => $beacon_id
+				]);
+			}
+ 
+			// Notificamos
+			$push = new Controller;
+			$beacon = Beacons::find($beacon_id);
+			$push->sendPush("Bienvenido(a) a Venture Café", "Te encuentras en: ".$beacon->descript,$user_id);
+		
+			return response()->json([
+				'data' => true
+			]);
+		} catch (\Exception $th) {
+			return response()->json(['data' => 'error', 'error' => $th->getMessage()]);
 		}
 	}
 }

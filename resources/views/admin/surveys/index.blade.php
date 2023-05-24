@@ -4,6 +4,8 @@
 @section('page_active') Eventos @endsection 
 @section('subpage_active') Listado @endsection 
 
+
+
 @section('content') 
 <div class="container-fluid">
 
@@ -22,6 +24,7 @@
                             <tr>
                                 <th>id</th>
                                 <th>Script</th>
+                                <th>Lanzamientos</th>
                                 <th>Status</th> 
                                 <th>Acción</th>
                                 <th style="text-align: right">Opciones</th>
@@ -37,6 +40,7 @@
                                     <td>
                                         {{ $row->script }}
                                     </td>
+                                    <td>{{ $row->get_signers_count }}</td>
                                     <td>
                                         @if ($row->status == 0)
                                             <button type="button"
@@ -49,9 +53,12 @@
                                         @endif 
                                     </td>
                                     <td>
+                                        
+                                        @include('admin.surveys.assignUserBeacons')
+ 
                                         <button type="button"
                                                 class="btn btn-info width-xs waves-effect waves-light"
-                                                onclick="confirmAlert('{{ Asset($link . 'launch_survey/' . $row->id) }}')">Lanzar encuesta</button>
+                                                data-bs-toggle="modal" data-bs-target="#modalAssignUsersBeacons{{$row->id}}">Lanzar encuesta</button>
                                     </td>
                                     <td width="17%" style="text-align: right">
 
@@ -80,4 +87,7 @@
         </div>
     </div>
 </div> 
+
+
+
 @endsection

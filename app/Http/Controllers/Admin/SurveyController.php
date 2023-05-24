@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Surveys; 
+use App\Models\Beacons;
+use App\Models\BeaconsSign;
+use App\Models\SurveysAssign;
 
 use DB;
 use Auth;
@@ -20,10 +23,13 @@ class SurveyController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
+    { 
+        
         return View($this->folder.'index',[
-			'data' => Surveys::orderBy('id','DESC')->get(),
-			'link' => '/survey/'
+			'data' => Surveys::withCount('getSigners')->orderBy('id','DESC')->get(),
+            'beacons' => Beacons::withCount('getSigners')->get(),
+			'link' => '/survey/',
+            'form_url' => '/survey/assignUsers/'
 		]);
     }
 
@@ -135,4 +141,36 @@ class SurveyController extends Controller
 
 		return redirect('/survey')->with('message','Estado actualizado con éxito.');
 	}
+
+    public function assignUsers(Request $Request)
+    {
+        // return response()->json($Request->all());
+        try {
+            $push = new Controller;
+            $beacon_id = $Request->get('beacon');
+            $survey_id = $Request->get('survey_id');
+
+            // Limpiamos
+            SurveysAssign::where('surveys_id',$survey_id)->delete();
+            // Registramos de nuevo
+            $gtUs = BeaconsSign::where('beacons_id',$beacon_id)->get();
+            foreach ($gtUs as $btc) {
+            // Creamos
+            $svAss = new SurveysAssign;
+            $svAss->create([
+                'user_id' => $btc->user_id,
+                'surveys_id' => $survey_id
+            ]);
+
+            // Notificamos
+            $push->sendPush("Encuesta de Venture Café",
+                "Hola, Ayudanos con una pequeña encuesta entrando en la aplicación de Venture Café. Recuerda esperar al menos 2 minutos para que la encuesta inicie.",
+                $btc->user_id);
+            }
+
+            return redirect('/survey')->with('message','Encuesta lanza con éxito.');
+        } catch (\Exception $th) {
+            return redirect('/survey')->with('error','Error: '.$th->getMessage());
+        }
+    }
 }

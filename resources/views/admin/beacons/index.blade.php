@@ -13,7 +13,7 @@
             <div class="card">
                 <div class="card-body table-responsive">
                     <p class="text-muted font-14 mb-3" style="position: relative;height: 50px;">
-                        <a href="{{ asset('./qr_generator/add') }}" type="button" class="btn btn-success waves-effect waves-light" style="float: right;">
+                        <a href="{{ asset('./beacons/create') }}" type="button" class="btn btn-success waves-effect waves-light" style="float: right;">
                             <span class="btn-label"><i class="mdi mdi-check-all"></i></span>Agregar elemento
                         </a>
                     </p>
@@ -24,6 +24,7 @@
                             <th>ID</th>
                             <th>Descripción</th>
                             <th>UUID</th>
+                            <th>Usuarios Registrados</th>
                             <th>Status</th>
                             <th style="text-align: right">Opciones</th>
                         </tr>
@@ -36,6 +37,7 @@
                                 <td>{{ $row->id }}</td>
                                 <td>{{ $row->descript }}</td>
                                 <td>{{ $row->uuid }}</td>
+                                <td>{{ $row->get_signers_count }}</td>
                                 <td>
                                     @if ($row->status == 1)
                                         <button type="button"
@@ -50,14 +52,18 @@
                                 <td style="text-align: right">
                                     <a href="{{ Asset($link . $row->id . '/edit') }}"
                                         class="btn btn-success waves-effect waves-light btn m-b-15 ml-2 mr-2 btn-md"
-                                        data-toggle="tooltip" data-placement="top"
-                                        data-original-title="Editar"><i
+                                        data-bs-toggle="tooltip" data-bs-placement="top"
+                                        data-bs-original-title="Editar"><i
                                             class="mdi mdi-border-color"></i></a>
-
+                                    <a href="{{ Asset($link . 'cleaner/'.$row->id) }}"
+                                        class="btn btn-warning waves-effect waves-light btn m-b-15 ml-2 mr-2 btn-md"
+                                        data-bs-toggle="tooltip" data-bs-placement="top"
+                                        data-bs-original-title="Limpiar"><i
+                                            class="mdi mdi-book-minus-outline"></i></a>
                                     <button type="button"
                                         class="btn m-b-15 ml-2 mr-2 btn-md  btn btn-danger waves-effect waves-light"
-                                        data-toggle="tooltip" data-placement="top"
-                                        data-original-title="Eliminar"
+                                        data-bs-toggle="tooltip" data-bs-placement="top"
+                                        data-bs-original-title="Eliminar"
                                         onclick="deleteConfirm('{{ Asset($link . 'delete/' . $row->id) }}')"><i
                                             class="mdi mdi-delete-forever"></i></button> 
                                 </td> 

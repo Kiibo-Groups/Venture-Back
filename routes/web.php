@@ -88,7 +88,7 @@ Route::prefix(env('user'))->namespace('User')->group(static function() {
         Route::get('survey',[App\Http\Controllers\Admin\SurveyController::class, 'index'])->name('survey');
         Route::get('survey/delete/{id}',[App\Http\Controllers\Admin\SurveyController::class, 'delete']);
         Route::get('survey/status/{id}',[App\Http\Controllers\Admin\SurveyController::class, 'status']);
-
+        Route::post('survey/assignUsers',[App\Http\Controllers\Admin\SurveyController::class, 'assignUsers']);
         /*
         |------------------------------
         |Manage Beacons
@@ -98,7 +98,7 @@ Route::prefix(env('user'))->namespace('User')->group(static function() {
         Route::get('beacons',[App\Http\Controllers\Admin\BeaconsController::class, 'index'])->name('beacons');
         Route::get('beacons/delete/{id}',[App\Http\Controllers\Admin\BeaconsController::class, 'delete']);
         Route::get('beacons/status/{id}',[App\Http\Controllers\Admin\BeaconsController::class, 'status']);
-
+        Route::get('beacons/cleaner/{id}',[App\Http\Controllers\Admin\BeaconsController::class, 'cleaner']);
         /*
         |------------------------------
         |Manage AppUser

@@ -56,14 +56,14 @@ class AppUser extends Authenticatable
 
                     if ($count_email == 0) {
                         $add                = new AppUser;
-                        $add->name          = $data['name'];
+                        $add->name          = ucwords($data['name']);
                         $add->email         = $data['email'];
                         $add->phone         = isset($data['phone']) ? $data['phone'] : 'null';
                         $add->password      = $data['password'];
                         $add->pswfacebook   = isset($data['pswfb']) ? $data['pswfb'] : 0;
                         $add->refered       = isset($data['refered']) ? $data['refered'] : '';
 
-                        $add->last_name     = isset($data['last_name']) ? $data['last_name'] : 'null';
+                        $add->last_name     = isset($data['last_name']) ? ucwords($data['last_name']) : 'null';
                         $add->birthday      = isset($data['birthday']) ? $data['birthday'] : 'null';
                         $add->sex_type      = isset($data['sex_type']) ? $data['sex_type'] : 'null'; 
 

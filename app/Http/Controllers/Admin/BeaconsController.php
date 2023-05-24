@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Auth;
-use App\Models\Beacons;  
+use App\Models\Beacons;
+use App\Models\BeaconsSign;  
 use App\Models\Admin;
 
 use DB;
@@ -23,8 +24,10 @@ class BeaconsController extends Controller
      */
     public function index()
     {
+
+
         return View($this->folder.'index',[
-			'data' => Beacons::get(),
+			'data' => Beacons::withCount('getSigners')->get(),
 			'link' => '/beacons/'
 		]);
     }
@@ -113,7 +116,7 @@ class BeaconsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function delete($id)
     {
         $res = Beacons::find($id); 
 		$res->delete();
@@ -133,4 +136,11 @@ class BeaconsController extends Controller
 
 		return redirect('/beacons')->with('message','Estado actualizado con éxito.');
 	}
+
+    public function cleaner($id)
+    {
+        $clean = BeaconsSign::where('beacons_id',$id)->delete();
+		return redirect('/beacons')->with('message','Elemento resetado con éxito.');
+
+    }
 }

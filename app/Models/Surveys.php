@@ -12,10 +12,14 @@ class Surveys extends Model
     protected $table = 'surveys'; 
 
     protected $fillable =[
-       'script',
-       'beacon_id',
+       'script', 
        'status'
     ];
+
+    public function getSigners()
+    {
+        return $this->hasMany('App\Models\SurveysAssign')->orderBy('created_at');
+    }
 
     function getAppData()
     {
