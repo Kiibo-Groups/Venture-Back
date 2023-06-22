@@ -230,6 +230,7 @@ class ApiController extends Controller
 		try {
 			$input = $Request->all();
 			$lim_data_createConn = new ValueConn;
+			$push = new Controller;
 			// Creamos la conexion en el primer servidor
 			$req = $lim_data_createConn->create($input);
 
@@ -253,6 +254,9 @@ class ApiController extends Controller
 				$lims_date_updateConn = ValueConn::find($req->id);
 				$lims_date_updateConn->external_id = $addBack['data'];
 				$lims_date_updateConn->save();
+
+				$push->sendPush("Nueva conexión", "Hola! Alguien te agrego a su red de valor...",$req->user_to);
+		
 			}
 
 			return response()->json([
@@ -412,10 +416,9 @@ class ApiController extends Controller
 				]);
 			}else {
 				$lims_data_braconNew = new BeaconsSign;
-				$lims_data_braconNew->create([
-					'user_id' => $user_id,
-					'beacons_id' => $beacon_id
-				]);
+				$lims_data_braconNew->user_id = $user_id;
+				$lims_data_braconNew->beacons_id = $user_id;
+				$lims_data_braconNew->save();
 			}
  
 			// Notificamos
