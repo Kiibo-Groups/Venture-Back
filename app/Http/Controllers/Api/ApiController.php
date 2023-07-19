@@ -416,9 +416,10 @@ class ApiController extends Controller
 				]);
 			}else {
 				$lims_data_braconNew = new BeaconsSign;
-				$lims_data_braconNew->user_id = $user_id;
-				$lims_data_braconNew->beacons_id = $user_id;
-				$lims_data_braconNew->save();
+				$lims_data_braconNew->create([
+					'user_id' => $user_id,
+					'beacons_id' => $beacon_id
+				]);
 			}
  
 			// Notificamos

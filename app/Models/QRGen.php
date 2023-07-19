@@ -62,7 +62,7 @@ class QRGen extends Model
             $data[] = [
                 'id' => $listQR->id,
                 'QR' => $listQR->qr_data,
-                'descript' => $QRInfo->descript,
+                'descript' => isset($QRInfo->descript) ? $QRInfo->descript : '',
                 'counter' => $counter,
                 'user' => $userInfo->name.' '.$userInfo->last_name,
                 'email' => $userInfo->email,
