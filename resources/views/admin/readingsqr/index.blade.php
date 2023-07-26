@@ -16,6 +16,16 @@
             border-radius: 15px;
         }
     
+        #input-scan {
+            margin: auto;
+            position: absolute;
+            top: 60px;
+            right: 0;
+            left: 0;
+            background: transparent;
+            border: transparent;
+
+        }
     </style>
 @endsection
 
@@ -31,7 +41,7 @@
                         Esperando Lectura del dispositivo
                     </h4>
 
-                    <input type="hidden" id="input-scan">
+                    <input type="text" id="input-scan">
 
                     <iframe id="iframeScan" src="https://embed.lottiefiles.com/animation/5427"></iframe>
 
@@ -40,6 +50,13 @@
                         <button type="button" class="btn btn-success waves-effect waves-light" onclick="initSacn()">
                             <span id="label-scann">
                                 <span class="btn-label"><i class="mdi mdi-check-all"></i></span>Iniciar camara
+                            </span>
+                        </button>
+
+
+                        <button type="button" class="btn btn-success waves-effect waves-light" onclick="UseScan()">
+                            <span id="label-scann">
+                                <span class="btn-label"><i class="mdi mdi-scan-helper"></i></span>Utilizar Scanner
                             </span>
                         </button>
                     </div>
@@ -70,6 +87,10 @@
        }, 1000);
     });
 
+    function UseScan() {
+        Input.value = "";
+        $("#input-scan").focus();
+    }
     // Inisializacion del Scann
     let scanner = new Instascan.Scanner(
         {
@@ -173,7 +194,7 @@
         .then(response => response.json())
         .then((data) => {
             console.log(data)
-            
+            Input.value = "";
             if (data.status == 200) {
                 Swal.fire({
                     icon: "success",
@@ -205,10 +226,11 @@
                     timer: 1500,
                 });
             }
-        });
 
+            
+            
+        });
  
-    }
- 
+    } 
 </script>
 @endsection 

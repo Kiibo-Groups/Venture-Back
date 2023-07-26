@@ -48,33 +48,26 @@ class AppUser extends Authenticatable
         if ($count == 0) {
             if (filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
 
-                $count_phone = AppUser::where('phone', $data['phone'])->count();
+                $count_email = AppUser::where('email', $data['email'])->count();
 
-                if ($count_phone == 0) {
+                if ($count_email == 0) {
+                    $add                = new AppUser;
+                    $add->name          = ucwords($data['name']);
+                    $add->email         = $data['email'];
+                    $add->phone         = isset($data['phone']) ? $data['phone'] : 'null';
+                    $add->password      = $data['password'];
+                    $add->pswfacebook   = isset($data['pswfb']) ? $data['pswfb'] : 0;
+                    $add->refered       = isset($data['refered']) ? $data['refered'] : '';
 
-                    $count_email = AppUser::where('email', $data['email'])->count();
+                    $add->last_name     = isset($data['last_name']) ? ucwords($data['last_name']) : 'null';
+                    $add->birthday      = isset($data['birthday']) ? $data['birthday'] : 'null';
+                    $add->sex_type      = isset($data['sex_type']) ? $data['sex_type'] : 'null'; 
+                    $add->rol           = isset($data['rol']) ? $data['rol'] : 0;
+                    $add->save();
 
-                    if ($count_email == 0) {
-                        $add                = new AppUser;
-                        $add->name          = ucwords($data['name']);
-                        $add->email         = $data['email'];
-                        $add->phone         = isset($data['phone']) ? $data['phone'] : 'null';
-                        $add->password      = $data['password'];
-                        $add->pswfacebook   = isset($data['pswfb']) ? $data['pswfb'] : 0;
-                        $add->refered       = isset($data['refered']) ? $data['refered'] : '';
-
-                        $add->last_name     = isset($data['last_name']) ? ucwords($data['last_name']) : 'null';
-                        $add->birthday      = isset($data['birthday']) ? $data['birthday'] : 'null';
-                        $add->sex_type      = isset($data['sex_type']) ? $data['sex_type'] : 'null'; 
-
-                        $add->save();
-
-                        return ['msg' => 'done', 'user_id' => $add->id];
-                    } else {
-                        return ['msg' => 'Opps! Este User Name  ya existe.'];
-                    }
+                    return ['msg' => 'done', 'user_id' => $add->id];
                 } else {
-                    return ['msg' => 'Opps! Este número telefonico ya existe.'];
+                    return ['msg' => 'Opps! Este User Name  ya existe.'];
                 }
             } else {
                 return ['msg' => 'Opps! El Formato del Email es invalido'];
@@ -172,11 +165,11 @@ class AppUser extends Authenticatable
             $add                = AppUser::find($id);
             $add->name          = $data['name'];
             $add->last_name     = $data['last_name'];
-            $add->email         = $data['email'];
-            $add->phone         = $data['phone'];
+            $add->email         = $data['email']; 
 
             $add->birthday      = $data['birthday'];
             $add->sex_type      = $data['sex_type']; 
+            $add->rol           = $data['rol']; 
 
             if (isset($data['password'])) {
                 $add->password    = $data['password'];
@@ -185,10 +178,17 @@ class AppUser extends Authenticatable
             if (isset($data['pic_profile'])) {
                 // Si la imagen anterior es diferente a la defalult la eliminamos
                 if ($add->pic_profile != 'not_available.png') {
-                    unlink("upload/users/".$add->pic_profile);
+                    @unlink("upload/users/".$add->pic_profile);
+                   
                 }
+
+                if ($data['pic_profile'] == 'https://venture.xedik.com/upload/users/not_available.png') {
+                    $add->pic_profile    = 'not_available.png';
+                }else {
+                    $add->pic_profile    = $data['pic_profile'];
+                }
+
                 
-                $add->pic_profile    = $data['pic_profile'];
             }
 
             $add->save();
@@ -337,6 +337,46 @@ class AppUser extends Authenticatable
             // Creamos array
             $data[] = [ 
                 'user' => $endUser->original['data'],
+                'rating' => $avg,
+                'table_id'	=> $value->id,
+                'created_at' => $value->created_at->diffForHumans(),
+            ];
+        }
+
+
+        return $data;
+    }
+
+    public function getAllConnections()
+    {
+        $req = ValueConn::get();
+        $data = [];
+        $root = new ApiController;
+
+        foreach ($req as $key => $value) {
+            // Obtenemos Informacion de usuarios Inicial
+            $FromUser  = $root->getUser($value->user_from);
+            // Obtenemos Informacion de usuarios final
+            $endUser  = $root->getUser($value->user_to);
+
+            /****** Ratings ********/
+                $totalRate    = ValueConn::where('user_to',$value->user_to)->count();
+                $totalRateSum = ValueConn::where('user_to',$value->user_to)->sum('rate');
+                
+                if($totalRate > 0)
+                {
+                    $avg          = $totalRateSum / $totalRate;
+                }
+                else
+                {
+                    $avg           = 0 ;
+                }
+            /****** Ratings ********/
+
+            // Creamos array
+            $data[] = [ 
+                'Fromuser' => $FromUser->original['data'],
+                'Enduser' => $endUser->original['data'],
                 'rating' => $avg,
                 'table_id'	=> $value->id,
                 'created_at' => $value->created_at->diffForHumans(),

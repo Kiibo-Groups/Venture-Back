@@ -56,6 +56,8 @@ Route::group(array('namespace' => 'App\Http\Controllers\Api'), function () {
     Route::post('createConn','ApiController@createConn');
     Route::get('getConnections/{id}','ApiController@getConnections');
     Route::get('search/{query}','ApiController@search');
+    
+    Route::get('getAllConnections','ApiController@getAllConnections');
 
     /**
      * 

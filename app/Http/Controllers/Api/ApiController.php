@@ -152,18 +152,20 @@ class ApiController extends Controller
 			$connVF = ValueConn::where('app_user_id', $id)->count();
 			$connvT = ValueConn::where('user_to', $id)->count();
 			$exceptData = ['pswfacebook','created_at','updated_at','otp','refered'];
-			// Cambiamos los datos de la imagen			
+			// Cambiamos los datos de la imagen		
 			$img_exp = $data->pic_profile;
-            $dat     = collect($data)->except($exceptData)->except('pic_profile');
-            $pic_profile = asset('upload/users/'.$img_exp);
-            // Agregamos los nuevos datos
+			$dat     = collect($data)->except($exceptData)->except('pic_profile');
+			$pic_profile = asset('upload/users/'.$img_exp);
+			// Agregamos los nuevos datos
 			$dat->put( 'pic_profile' , $pic_profile );
 			$dat->put( 'connVF' , $connVF );
 			$dat->put( 'connvT' , $connvT );
-			
+
 			return response()->json([
 				'data' => $dat, 
 			]);
+
+			
 		} catch (\Exception $th) {
 			return response()->json(['data' => 'error', 'error' => $th->getMessage()]);
 		}
@@ -171,8 +173,12 @@ class ApiController extends Controller
 	
 	public function updateInfo($id,Request $Request)
 	{
-		$res = new AppUser;
-		return response()->json($res->updateInfo($Request->all(),$id));
+		try {
+			$res = new AppUser;
+			return response()->json($res->updateInfo($Request->all(),$id));
+		} catch (\Exception $th) {
+			return response()->json(['data' => 'error', 'error' => $th->getMessage()]);
+		}
 	}
 
 	/**
@@ -244,7 +250,7 @@ class ApiController extends Controller
 				$newData = [
 					'userFrom' => $initUser->original['data'],
 					'userTo' => $endUser->original['data'],
-					'rating' => $req->rate,
+					'rating' => 0,
 					'table_id'	=> $req->id,
 					'created_at' => $req->created_at
 				];
@@ -255,7 +261,7 @@ class ApiController extends Controller
 				$lims_date_updateConn->external_id = $addBack['data'];
 				$lims_date_updateConn->save();
 
-				$push->sendPush("Nueva conexión", "Hola! Alguien te agrego a su red de valor...",$req->user_to);
+				$push->sendPush("Nueva conexión de valor", "Hola! ". $initUser->original['data']['name'] ." ". $initUser->original['data']['last_name'] ." te agrego a su red de valor...",$req->user_to);
 		
 			}
 
@@ -273,6 +279,18 @@ class ApiController extends Controller
 			$req = new AppUser;
 			return response()->json([
 				'data' => $req->getConnectionsByUserId($id)
+			]);
+		} catch (\Exception $th) {
+			return response()->json(['data' => 'error', 'error' => $th->getMessage()]);
+		}
+	}
+
+	public function getAllConnections()
+	{
+		try {
+			$req = new AppUser;
+			return response()->json([
+				'data' => $req->getAllConnections()
 			]);
 		} catch (\Exception $th) {
 			return response()->json(['data' => 'error', 'error' => $th->getMessage()]);
@@ -316,16 +334,16 @@ class ApiController extends Controller
 				$qrInfo = QRGen::find($key->qr_id);
 
 				$data[] = [
-					'info' => $qrInfo->descript,
+					'info' => isset($qrInfo->descript) ? $qrInfo->descript : '',
 					'decript' => $key->decript,
-					'date_limit' => $qrInfo->date_limit,
+					'date_limit' => isset($qrInfo->date_limit) ? $qrInfo->date_limit : '',
 					'date_create' => $key->created_at->diffForHumans(),
 					'status' => $key->status,
 					'qr' => $key->qr_data
 				];
 			}
 			return response()->json([
-				'status' => 200,
+				'status' => 'true',
 				'data' => $data
 			]);
 		} catch (\Throwable $th) {
