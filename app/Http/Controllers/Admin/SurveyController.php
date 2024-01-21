@@ -159,7 +159,8 @@ class SurveyController extends Controller
             $svAss = new SurveysAssign;
             $svAss->create([
                 'user_id' => $btc->user_id,
-                'surveys_id' => $survey_id
+                'surveys_id' => $survey_id,
+                'ready' => 0
             ]);
 
             // Notificamos

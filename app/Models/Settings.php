@@ -11,6 +11,7 @@ class Settings extends Model
     protected $table = 'settings'; 
 
     protected $fillable =[
+        'meta_conns',
         'ApiKey_google',  
         'stripe_api_id',
         'stripe_client_id',

@@ -22,6 +22,11 @@ class AppUser extends Authenticatable
         'last_name',
         'birthday',
         'sex_type',
+        'rol',
+        'linkedin',
+        'facebook',
+        'instagram',
+        'twitter',
         'password',
         'pswfacebook',
         'phone',
@@ -170,6 +175,10 @@ class AppUser extends Authenticatable
             $add->birthday      = $data['birthday'];
             $add->sex_type      = $data['sex_type']; 
             $add->rol           = $data['rol']; 
+            $add->linkedin      = $data['linkedin'];
+            $add->facebook      = $data['facebook'];
+            $add->instagram     = $data['instagram'];
+            $add->twitter       = $data['twitter'];
 
             if (isset($data['password'])) {
                 $add->password    = $data['password'];
@@ -297,7 +306,7 @@ class AppUser extends Authenticatable
             $img_exp = $value->pic_profile;
             $dat     = collect($value)->except($exceptData)->except('pic_profile');
             $pic_profile = asset('upload/users/'.$img_exp);
-            $newData = $dat->put( 'pic_profile' , $pic_profile );
+            $newData = $dat->put( 'pic_profile' , $pic_profile ); 
 
             $data[] = $newData;
         }
@@ -312,13 +321,13 @@ class AppUser extends Authenticatable
     */
     public function getConnectionsByUserId($user_id)
     {
-        $req = ValueConn::where('app_user_id', $user_id)->get();
+        $req = ValueConn::where('app_user_id', $user_id)->Orwhere('user_to', $user_id)->get();
         $data = [];
         $root = new ApiController;
 
         foreach ($req as $key => $value) {
-            // Obtenemos Informacion de usuarios 
-            $endUser  = $root->getUser($value->user_to);
+            
+            
 
             /****** Ratings ********/
                 $totalRate    = ValueConn::where('user_to',$value->user_to)->count();
@@ -334,10 +343,23 @@ class AppUser extends Authenticatable
                 }
             /****** Ratings ********/
 
+            if ($value->user_to == $user_id) { // es solicitud
+                // Obtenemos Informacion de usuarios 
+                $endUser  = $root->getUser($value->app_user_id);
+                $type     = 1;
+            }else { // Es propuesta
+                // Obtenemos Informacion de usuarios 
+                $endUser  = $root->getUser($value->user_to);
+                $type     = 0;
+            }
+
             // Creamos array
             $data[] = [ 
+                'type' => $type,
                 'user' => $endUser->original['data'],
                 'rating' => $avg,
+                'descript' => $value->descript,
+                'accept' => $value->accept,
                 'table_id'	=> $value->id,
                 'created_at' => $value->created_at->diffForHumans(),
             ];
@@ -349,13 +371,13 @@ class AppUser extends Authenticatable
 
     public function getAllConnections()
     {
-        $req = ValueConn::get();
+        $req = ValueConn::where('accept',1)->orderBy('id','DESC')->get();
         $data = [];
         $root = new ApiController;
 
         foreach ($req as $key => $value) {
             // Obtenemos Informacion de usuarios Inicial
-            $FromUser  = $root->getUser($value->user_from);
+            $FromUser  = $root->getUser($value->app_user_id);
             // Obtenemos Informacion de usuarios final
             $endUser  = $root->getUser($value->user_to);
 
@@ -377,9 +399,10 @@ class AppUser extends Authenticatable
             $data[] = [ 
                 'Fromuser' => $FromUser->original['data'],
                 'Enduser' => $endUser->original['data'],
-                'rating' => $avg,
+                'descript' => $value->descript,
                 'table_id'	=> $value->id,
-                'created_at' => $value->created_at->diffForHumans(),
+                'created_at' => $value->created_at,
+                'date_time' => $value->created_at->diffForHumans(),
             ];
         }
 

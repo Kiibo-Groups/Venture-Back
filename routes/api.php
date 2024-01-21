@@ -22,6 +22,7 @@ Route::group(array('namespace' => 'App\Http\Controllers\Api'), function () {
     Route::get('welcome','ApiController@welcome');
     Route::get('getDataInit','ApiController@getDataInit');
     Route::get('GetSurveysAssign/{id}','ApiController@GetSurveysAssign');
+    Route::get('changeStatusSurver/{id}/{survey}','ApiController@changeStatusSurver');
     
     /**
      * Datos iniciales para usuarios registrados
@@ -58,7 +59,9 @@ Route::group(array('namespace' => 'App\Http\Controllers\Api'), function () {
     Route::get('search/{query}','ApiController@search');
     
     Route::get('getAllConnections','ApiController@getAllConnections');
-
+    Route::get('getSolicitudes/{id}','ApiController@getSolicitudes');
+    Route::get('AcceptConn/{id}','ApiController@AcceptConn');
+    // Route::middleware('auth:api')->get('getAllConnections','ApiController@getAllConnections');
     /**
      * 
      * Funciones para Generacion y manejo de QR

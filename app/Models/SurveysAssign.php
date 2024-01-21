@@ -14,6 +14,7 @@ class SurveysAssign extends Model
     protected $fillable =[
        'user_id',
        'surveys_id',
+       'ready'
     ];
 
 }

@@ -47,8 +47,7 @@
                                             <button type="button"
                                                 class="btn btn-danger width-xs waves-effect waves-light"
                                                 onclick="confirmAlert('{{ Asset($link . 'status/' . $row->id) }}')">Inactivo</button>
-                                        @endif
-
+                                        @endif 
                                     </td>
                                     <td width="17%" style="text-align: right">
 

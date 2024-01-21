@@ -75,7 +75,7 @@
  
 <script>
     var sound = new Audio('{{ asset("resources/data/scan.mp3") }}');
-    var ScannFlag = false; 
+    var ScannFlag
     var Input = document.getElementById('input-scan');
 
 

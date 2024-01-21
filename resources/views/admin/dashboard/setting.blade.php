@@ -12,6 +12,19 @@
             
             <form action="{{ $form_url }}" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                
+                <h4>Meta de Conexiones <br /><small style="font-size: 12px">( Meta para tus conexiones Semanales o Mensuales )</small></h4>
+                <div class="card py-3 m-b-30" style="margin-bottom: 50px">
+                    <div class="card-body">
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label for="meta_conns">Meta</label>
+                                <input type="text" class="form-control" id="meta_conns" name="meta_conns" value="{{ $data->meta_conns }}">
+                            </div> 
+                        </div>
+                    </div>
+                </div>
+
                 <h4>Google ApiKey <br /><small style="font-size: 12px">(Introduce el ApiKey de tu cuenta en <a href="https://cloud.google.com/" target="_blank">https://cloud.google.com/</a> )</small></h4>
                 <div class="card py-3 m-b-30" style="margin-bottom: 50px">
                     <div class="card-body">

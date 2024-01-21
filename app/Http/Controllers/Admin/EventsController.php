@@ -120,7 +120,7 @@ class EventsController extends Controller
 	public function delete($id)
 	{
 		$res = Events::find($id);
-		unlink("upload/events/".$res->img);
+		@unlink("upload/events/".$res->img);
 		$res->delete();
 		return redirect('/events')->with('message','Registro eliminado con éxito.');
 	}

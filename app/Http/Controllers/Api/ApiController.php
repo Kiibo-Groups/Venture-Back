@@ -22,6 +22,7 @@ use App\Models\QRGen;
 use App\Models\ListQR;
 use App\Models\Beacons;
 use App\Models\BeaconsSign;
+use App\Models\Settings;
 
 use DB;
 use Validator;
@@ -48,7 +49,8 @@ class ApiController extends Controller
 		
 		try {
 			return response()->json([
-				'admin'		=> Admin::find(1)
+				'admin'		=> Admin::find(1),
+				'settings'  => Settings::find(1)
 			]);
 		} catch (\Exception $th) {
 			return response()->json(['data' => 'error', 'error' => $th->getMessage()]);
@@ -72,35 +74,55 @@ class ApiController extends Controller
 		return response()->json(['data' => $data]);
 	}
 
+	 
+	/**
+	 * La función `GetSurveysAssign` recupera encuestas asignadas a un usuario que aún no están listas,
+	 * extrae el script y el ID del script de cada encuesta y devuelve los datos como una respuesta JSON.
+	 * 
+	 * @param id El parámetro "id" es la identificación del usuario. Se utiliza para recuperar encuestas
+	 * asignadas a un usuario específico.
+	 * 
+	 * @return una respuesta JSON con la matriz de datos. La matriz de datos contiene información sobre
+	 * encuestas asignadas a un usuario específico y que aún no están listas. Cada elemento de la matriz
+	 * de datos incluye el ID de la asignación de la encuesta, el ID de la encuesta, la URL del script y
+	 * el ID extraído de la URL del script.
+	 */
 	public function GetSurveysAssign($id)
 	{
 		try {
 
-			$survs = SurveysAssign::where('user_id', $id)->get();
+			$survs = SurveysAssign::where('user_id', $id)->where('ready',0)->get();
 			$data = [];
 			foreach ($survs as $key) {
 
 				$row  = Surveys::find($key->surveys_id);
 
-				$grabbed_src = "";
-				$html = $row->script;
-				$dom = new DOMDocument;
-				$dom->loadHTML($html);
-				$nodes = $dom->getElementsByTagName("script");
-				foreach ($nodes as $node)
-				{
-					$attributes = $node->attributes;
-					foreach ( $attributes as $attr )
+				if ($row->status == 0) {
+					$grabbed_src = "";
+					$html = $row->script;
+					$dom = new DOMDocument;
+					$dom->loadHTML($html);
+					$nodes = $dom->getElementsByTagName("script");
+					foreach ($nodes as $node)
 					{
-						if ( $attr->name == "src" ) $grabbed_src = $attr->value;
-					}
-				} 
+						$attributes = $node->attributes;
+						foreach ( $attributes as $attr )
+						{
+							if ( $attr->name == "src" ) $grabbed_src = $attr->value;
+						}
+					} 
 
-				$data[] = [ 
-					'survAssign_id' => $key->id,
-					'survey_id' => $key->surveys_id,
-					'script'    => $grabbed_src
-				];
+
+					$idScript = explode('.',$grabbed_src);
+					$last     = count($idScript)-2; // < last < js = id
+
+					$data[] = [ 
+						'survAssign_id' => $key->id,
+						'survey_id' => $key->surveys_id,
+						'script'    => $grabbed_src, 
+						'idScript'  => $idScript[$last]
+					];
+				}
 			}
 
 			return response()->json([
@@ -108,6 +130,33 @@ class ApiController extends Controller
 			]);
 		} catch (\Exception $th) {
 			return response()->json(['data' => 'error', 'error' => $th->getMessage()]);
+		}
+	}
+
+	/**
+	 * La función "changeStatusSurver" actualiza el campo "listo" de un registro SurveysAssign a 1 y
+	 * devuelve el registro actualizado como una respuesta JSON.
+	 * 
+	 * @param user_id La ID de usuario es el identificador único del usuario cuyo estado se cambia. Se
+	 * utiliza para identificar al usuario específico en la base de datos.
+	 * @param surver_id El parámetro `surver_id` es el ID de la encuesta cuyo estado desea cambiar.
+	 * 
+	 * @return una respuesta JSON. La respuesta tiene un código de estado de 200 e incluye el objeto de la
+	 * encuesta actualizado en el campo "datos".
+	 */
+	public function changeStatusSurver($user_id, $surver_id)
+	{
+		try {
+			$survs = SurveysAssign::where('user_id', $user_id)->where('surveys_id',$surver_id)->first();
+			$survs->ready = 1;
+			$survs->save();
+
+			return response()->json([
+				'status'	=> 200,
+				'data'		=> $survs
+			]);
+		} catch (\Exception $th) {
+			return response()->json(['status' => 400, 'data' => 'error', 'error' => $th->getMessage()]);
 		}
 	}
 
@@ -251,6 +300,8 @@ class ApiController extends Controller
 					'userFrom' => $initUser->original['data'],
 					'userTo' => $endUser->original['data'],
 					'rating' => 0,
+					'descript' => $req->descript,
+					'accept'   => $req->accept,
 					'table_id'	=> $req->id,
 					'created_at' => $req->created_at
 				];
@@ -304,6 +355,61 @@ class ApiController extends Controller
 			return response()->json([
 				'data' => $req->searchByUserName($query)
 			]);
+		} catch (\Exception $th) {
+			return response()->json(['data' => 'error', 'error' => $th->getMessage()]);
+		}
+	}
+
+	public function getSolicitudes($id)
+	{
+		try { 
+			
+			$connvT = ValueConn::where('user_to', $id)->where('accept',0)->get();
+			$exceptData = ['pswfacebook','created_at','updated_at','otp','refered'];
+			$data = [];
+			foreach ($connvT as $key) {
+
+				$user_dat	= AppUser::find($key->app_user_id); 
+
+				// Cambiamos los datos de la imagen		
+				$img_exp = $user_dat->pic_profile;
+				$dat     = collect($user_dat)->except($exceptData)->except('pic_profile');
+				$pic_profile = asset('upload/users/'.$img_exp);
+				// Agregamos los nuevos datos
+				$dat->put( 'id_conn', $key->id );
+				$dat->put( 'pic_profile' , $pic_profile ); 
+				$dat->put( 'descript' , $key->descript ); 
+				$dat->put( 'accept' , $key->accept );
+
+				$data[] = $dat;
+			}
+
+			return response()->json([
+				'data' => $data, 
+			]);
+
+			
+		} catch (\Exception $th) {
+			return response()->json(['data' => 'error', 'error' => $th->getMessage()]);
+		}
+	}
+
+	public function AcceptConn($id)
+	{
+		try {
+			
+			$push = new Controller;
+			$connvT = ValueConn::find($id);
+
+			$connvT->accept = 1;
+			$connvT->save(); 
+			$initUser	= AppUser::find($connvT->user_to);
+
+			$push->sendPush("Conexión de valor Aceptada", "Hola! ". $initUser->name ." ". $initUser->last_name ." Acaba de aceptar tu solicitud...",$connvT->app_user_id);
+			return response()->json([
+				'data' => true, 
+			]);
+
 		} catch (\Exception $th) {
 			return response()->json(['data' => 'error', 'error' => $th->getMessage()]);
 		}

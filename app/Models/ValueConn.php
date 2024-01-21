@@ -15,7 +15,9 @@ class ValueConn extends Model
        'external_id',
        'app_user_id',
        'user_to',
-       'rate'
+       'rate',
+       'descript',
+       'accept'
     ];
 
     
