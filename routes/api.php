@@ -38,6 +38,7 @@ Route::group(array('namespace' => 'App\Http\Controllers\Api'), function () {
     Route::post('SignPhone','ApiController@SignPhone');
     Route::post('forgot','ApiController@forgot');
     Route::post('verify','ApiController@verify');
+    Route::post('updatePassword','ApiController@updatePassword');
 
     /**
      * Funciones de inicio de sesion y validacion de usuario

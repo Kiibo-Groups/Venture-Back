@@ -278,6 +278,16 @@ class ApiController extends Controller
 		}
 	}
 
+	public function updatePassword(Request $Request)
+	{
+		try {
+			$res = new AppUser; 
+			return response()->json($res->verify($Request->all()));
+		} catch (\Exception $th) {
+			return response()->json(['msg' => 'error', 'error' => $th->getMessage()]);
+		}
+	}
+
 	/**
 	 * Funciones para conexiones de valor
 	 */
