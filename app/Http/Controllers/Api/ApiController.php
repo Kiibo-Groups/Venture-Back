@@ -258,6 +258,26 @@ class ApiController extends Controller
 		return response()->json($res->SignPhone($Request->all()));
 	}
 
+	public function forgot(Requeset $Request)
+	{
+		try {
+			$res = new AppUser; 
+			return response()->json($res->forgot($Request->all()));
+		} catch (\Exception $th) {
+			return response()->json(['msg' => 'error', 'error' => $th->getMessage()]);
+		}
+	}
+
+	public function verify(Requeset $Request)
+	{
+		try {
+			$res = new AppUser; 
+			return response()->json($res->verify($Request->all()));
+		} catch (\Exception $th) {
+			return response()->json(['msg' => 'error', 'error' => $th->getMessage()]);
+		}
+	}
+
 	/**
 	 * Funciones para conexiones de valor
 	 */
