@@ -258,7 +258,7 @@ class ApiController extends Controller
 		return response()->json($res->SignPhone($Request->all()));
 	}
 
-	public function forgot(Requeset $Request)
+	public function forgot(Request $Request)
 	{
 		try {
 			$res = new AppUser; 
@@ -268,7 +268,7 @@ class ApiController extends Controller
 		}
 	}
 
-	public function verify(Requeset $Request)
+	public function verify(Request $Request)
 	{
 		try {
 			$res = new AppUser; 
