@@ -219,7 +219,7 @@ class AppUser extends Authenticatable
             $res->save();
 
             $para       =   $data['email'];
-            $asunto     =   'Codigo de acceso - A100VentureCafeTO';
+            $asunto     =   'Codigo de acceso - VentureCafe';
             $mensaje    =   "Hola " . $res->name . " Un gusto saludarte, se ha pedido un codigo de recuperacion para acceder a tu cuenta en VentureCafe";
             $mensaje    .=  ' ' . '<br>';
             $mensaje    .=  "Tu codigo es: <br />";
