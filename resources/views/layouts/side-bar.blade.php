@@ -167,7 +167,7 @@
                 </li>
                 <!-- Encuestas -->
 
-                <!-- Beacons -->
+                <!-- Beacons 
                 <li>
                     <a href="#beacons" data-bs-toggle="collapse">
                         <i class="mdi mdi-rss-box"></i>
@@ -185,7 +185,7 @@
                         </ul>
                     </div>
                 </li>
-                <!-- Beacons -->
+                 Beacons -->
 
                 <!-- Usuarios -->
                 <li>

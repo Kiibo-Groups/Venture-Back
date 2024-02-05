@@ -53,28 +53,26 @@
                                         @endif 
                                     </td>
                                     <td>
-                                        
-                                        @include('admin.surveys.assignUserBeacons')
- 
-                                        <button type="button"
-                                                class="btn btn-info width-xs waves-effect waves-light"
-                                                data-bs-toggle="modal" data-bs-target="#modalAssignUsersBeacons{{$row->id}}">Lanzar encuesta</button>
+                                        {!! Form::open(['url' => [$form_url],'files' => true,'method' => 'POST'],['class' => 'px-3']) !!}
+                                            <input type="hidden" name="survey_id" value="{{$row->id}}">
+                                            <button type="submit" class="btn btn-info width-xs waves-effect waves-light">
+                                                Lanzar encuesta Global
+                                            </button>
+                                        </form>
                                     </td>
                                     <td width="17%" style="text-align: right">
-
                                         <a href="{{ Asset($link . $row->id . '/edit') }}"
                                             class="btn btn-success waves-effect waves-light btn m-b-15 ml-2 mr-2 btn-md"
                                             data-toggle="tooltip" data-placement="top"
                                             data-original-title="Editar"><i
                                                 class="mdi mdi-border-color"></i></a>
-
                                         <button type="button"
                                             class="btn m-b-15 ml-2 mr-2 btn-md  btn btn-danger waves-effect waves-light"
                                             data-toggle="tooltip" data-placement="top"
                                             data-original-title="Eliminar"
                                             onclick="deleteConfirm('{{ Asset($link . 'delete/' . $row->id) }}')"><i
-                                                class="mdi mdi-delete-forever"></i></button>
-
+                                            class="mdi mdi-delete-forever"></i></button>
+                                       
                                     </td>
                                 </tr>
                             @endforeach
@@ -87,7 +85,4 @@
         </div>
     </div>
 </div> 
-
-
-
 @endsection
