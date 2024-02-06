@@ -282,7 +282,7 @@ class ApiController extends Controller
 	{
 		try {
 			$res = new AppUser; 
-			return response()->json($res->verify($Request->all()));
+			return response()->json($res->updatePassword($Request->all()));
 		} catch (\Exception $th) {
 			return response()->json(['msg' => 'error', 'error' => $th->getMessage()]);
 		}
