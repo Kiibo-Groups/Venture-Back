@@ -204,13 +204,21 @@ class ApiController extends Controller
 			// Cambiamos los datos de la imagen		
 			$img_exp = $data->pic_profile;
 			$dat     = collect($data)->except($exceptData)->except('pic_profile');
-			$pic_profile = asset('upload/users/'.$img_exp);
+			
+
+			$chkUser = new AppUser;
+			if (@getimagesize(asset('upload/users/'.$img_exp))) {
+				$pic_profile = asset('upload/users/'.$img_exp);
+			}else {
+				$pic_profile = null; 
+			}
 			// Agregamos los nuevos datos
 			$dat->put( 'pic_profile' , $pic_profile );
 			$dat->put( 'connVF' , $connVF );
 			$dat->put( 'connvT' , $connvT );
 
 			return response()->json([
+				'chkUser' => $data->url_exists(asset('upload/users/'.$img_exp)),
 				'data' => $dat, 
 			]);
 
